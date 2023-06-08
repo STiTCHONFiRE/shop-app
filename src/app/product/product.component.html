@@ -1,0 +1,63 @@
+<ng-container *ngIf="(product$ | async) as state" [ngSwitch]="state.appState">
+  <ng-container *ngSwitchCase="'APP_ERROR'">
+    {{state.err | json}}
+  </ng-container>
+  <ng-container *ngSwitchCase="'APP_LOADED'">
+    <div class="flex flex-col justify-center items-center m-5">
+      <div class="card w-11/12 bg-base-200">
+        <div class="card-body">
+          <div class="grid grid-cols-2 grid-rows-3 gap-5">
+            <div class="row-span-3">
+              <div class="flex items-center w-full" style="margin-left: 50px; margin-top: 30px">
+                <ngx-gallery [options]="galleryOptions" [images]="galleryImages" class="ngx-gallery"></ngx-gallery>
+              </div>
+            </div>
+            <div class="col-span-1 row-span-2" style="margin-right: 20px; margin-top: 30px">
+              <h2
+                class="card-title text-3xl">{{state.appData.productType}} {{state.appData.productProducer}} {{state.appData.tittle}}</h2>
+              <div class="text-xl">[{{state.appData.characteristicsShort}}]</div>
+              <div class="" style="margin-top: 20px">{{state.appData.description}}</div>
+            </div>
+            <div class="col-span-1 row-span-1" style="margin-top: 20px; margin-right: 20px">
+              <div class="flex flex-col justify-around">
+                <div class="flex flex-wrap justify-between ">
+                  <div class="text-xl text-white btn btn-outline">{{state.appData.price | number}} руб.</div>
+                  <div>
+                    <button class="btn btn-primary mx-3"
+                            *ngIf="isLogin() && !isContaining(state.appData.id) && state.appData.productState == 'ACTIVE'"
+                            (click)="addToCart(state.appData.id)">Добавить в корзину
+                    </button>
+                    <button class="btn btn-primary mx-3" *ngIf="isLogin() && isContaining(state.appData.id)"
+                            (click)="removeFromCart(state.appData.id)">Убрать из корзины
+                    </button>
+                    <button class="btn btn-primary mx-3" *ngIf="!isLogin()" (click)="login()">Войдите чтобы добавить в
+                      корзину
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card w-11/12 bg-base-200 my-10">
+        <div class="card-body m-5">
+          <div class="tabs tabs-boxed">
+            <a class="tab tab-lg tab-active" (click)="setCharacteristics()" *ngIf="bottomState == 'CHARACTERISTICS'">Характеристики</a>
+            <a class="tab tab-lg" (click)="setCharacteristics()" *ngIf="!(bottomState == 'CHARACTERISTICS')">Характеристики</a>
+            <a class="tab tab-lg tab-active" (click)="setReviews()" *ngIf="bottomState == 'REVIEWS'">Отзывы</a>
+            <a class="tab tab-lg" (click)="setReviews()" *ngIf="!(bottomState == 'REVIEWS')">Отзывы</a>
+          </div>
+          <ng-container *ngIf="bottomState == 'CHARACTERISTICS'">
+            <h2 class="card-title">Характеристики {{state.appData.productProducer}} {{state.appData.tittle}}</h2>
+            <div class="flex-none" [innerHTML]="state.appData.characteristics | safehtml"></div>
+          </ng-container>
+          <ng-container *ngIf="bottomState == 'REVIEWS'">
+            <h2 class="card-title">Отзывы {{state.appData.productProducer}} {{state.appData.tittle}}</h2>
+            <app-reviews [id]="state.appData.id"></app-reviews>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

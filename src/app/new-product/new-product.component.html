@@ -1,0 +1,133 @@
+<ng-container *ngIf="state == 'INPUT'">
+  <div class="flex justify-center items-center m-5">
+    <div class="card md:w-6/12 w-11/12 bg-base-200">
+      <div class="card-body">
+        <h2 class="card-title mx-10">Введите данные о новом продукте</h2>
+        <div class="flex flex-col m-4 justify-center items-center">
+          <form [formGroup]="productForm">
+            <div class="flex flex-wrap">
+              <div class="">
+                <label class="label">
+                  <span class="label-text">Тип продукта</span>
+                </label>
+                <select formControlName="productType" class="select select-bordered w-full max-w-fit">
+                  <option [ngValue]="null" disabled selected>Выберите тип продукта</option>
+                  <option *ngFor="let productType of productTypes" [ngValue]="productType">
+                    {{productType.name}}
+                  </option>
+                </select>
+              </div>
+              <div class="xl:mx-4">
+                <label class="label">
+                  <span class="label-text">Состояние продукта</span>
+                </label>
+                <select formControlName="productState" class="select select-bordered w-full max-w-fit">
+                  <option [ngValue]="null" disabled selected>Выберите состояние продукта</option>
+                  <option *ngFor="let productState of productStates" [ngValue]="productState">
+                    {{productState.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Производитель продукта</span>
+              </label>
+              <input placeholder="Введите производителя продукта" type="text" formControlName="productProducer"
+                     class="input input-bordered max-w-lg w-full"/>
+              <label class="label">
+                <span class="label-text">Название</span>
+              </label>
+              <input placeholder="Введите название и модель продукта" type="text" formControlName="tittle"
+                     class="input input-bordered max-w-lg w-full" style="margin-bottom: 30px"/>
+            </div>
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Краткая характеристика продукта</span>
+              </label>
+              <textarea placeholder="Введите краткую характеристику продукта" type="text"
+                        formControlName="characteristicsShort" class="textarea textarea-bordered w-full"
+                        style="height: 200px"></textarea>
+            </div>
+            <div class="form-control w-full my-2">
+              <!--<label class="label">
+                <span class="label-text">Характеристика продукта</span>
+              </label>
+              <textarea placeholder="Введите подробную характеристику продукта" type="text"
+                         class="textarea textarea-bordered w-full"
+                        style="height: 300px"></textarea> -->
+              <label class="label">
+                <span class="label-text">Подробные характеристики товара</span>
+              </label>
+              <angular-editor [config]="editorConfig" formControlName="characteristics" [placeholder]="'Введите подробную характеристики продукта'" style="height: 400px"></angular-editor>
+            </div>
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Описание товара</span>
+              </label>
+              <textarea placeholder="Введите описание продукта" type="text" formControlName="description"
+                        class="textarea textarea-bordered w-full" style="height: 200px"></textarea>
+            </div>
+            <div class="flex flex-wrap items-center justify-center" style="margin-top: 30px">
+              <div>
+                <label class="label">
+                  <span class="label-text">Цена</span>
+                </label>
+                <input formControlName="price" type="number" placeholder="10" class="input input-bordered"/>
+              </div>
+              <div class="md:mx-4">
+                <label class="label">
+                  <span class="label-text">Кол-во</span>
+                </label>
+                <input formControlName="n" placeholder="1" type="number" class="input input-bordered"/>
+              </div>
+            </div>
+          </form>
+          <form enctype="multipart/form-data">
+            <fieldset>
+              <div class="flex items-center justify-center m-2 p-2">
+                <input type="file" class="file-input w-full max-w-xs" (change)="onUploadFiles($event)"
+                       name="files" multiple/>
+              </div>
+            </fieldset>
+          </form>
+          <div class="card-actions m-5 items-center justify-center" style="margin-top: 50px">
+            <button class="btn btn-primary" (click)="onSendData()" [disabled]="productForm.invalid">создать продукт
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="state == 'SHOWING'">
+  <ng-container *ngIf="(productCreated$ | async) as state" [ngSwitch]="state.appState">
+    <ng-container *ngSwitchCase="'APP_ERROR'">
+      {{state.err | json}}
+    </ng-container>
+    <ng-container *ngSwitchCase="'APP_LOADED'">
+      <div class="flex justify-center items-center m-5">
+        <div class="card w-8/12 bg-base-200">
+          <div class="card-body">
+            <h2 class="card-title">Созданная страница товара</h2>
+            <div class="flex flex-col m-2">
+              <div>Тип: <span class="badge badge-primary">{{state.appData.productType}}</span></div>
+              <div>Состояния: {{state.appData.productState}}</div>
+              <div>Производитель: {{state.appData.productProducer}}</div>
+              <div>Описание: {{state.appData.description}}</div>
+              <div>Характеристики: {{state.appData.characteristics}}</div>
+              <div>Количество товара: {{state.appData.n}}</div>
+              <div>Цена: {{state.appData.price}}</div>
+              <div class="my-5 flex flex-wrap">
+                <div class="m-2" *ngFor="let image of state.appData.imagesIds">
+                  <img [src]="'http://localhost:8081/api/v1/products/public/images/' + image" class="rounded-box"
+                       style="height: 200px; width: 200px"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>

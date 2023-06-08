@@ -1,0 +1,65 @@
+<ng-container *ngIf="(reviews$ | async) as reviewsState" [ngSwitch]="reviewsState.appState">
+  <ng-container *ngIf="(reviewsContent$.asObservable() | async) as reviews" [ngSwitch]="reviews.length">
+    <ng-container *ngSwitchDefault>
+      <div class="grid grid-cols-5">
+        <div class="col-span-2">
+          <ng-container *ngIf="(reviewStat$ | async) as stat" [ngSwitch]="stat.appState">
+            <ng-container *ngSwitchCase="'APP_LOADING'">
+              <div class="flex justify-center items-center py-10">
+                <span class="loading text-primary loading-dots loading-lg"></span>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="'APP_ERROR'">
+              {{stat.appErr | json}}
+            </ng-container>
+            <ng-container *ngSwitchCase="'APP_LOADED'">
+              <div class="flex flex-col">
+                <div class="text-xl m-2">Общая оценка: {{getSum(stat.appData) | number}} / 5 ({{stat.appData.n}})</div>
+                <div class="m-2">
+                  <div>1</div>
+                  <progress class="progress progress-primary w-56" [value]="stat.appData.pc[0] / stat.appData.n * 100"
+                            max="100"></progress>
+                  <div>2</div>
+                  <progress class="progress progress-primary w-56" [value]="stat.appData.pc[1] / stat.appData.n * 100"
+                            max="100"></progress>
+                  <div>3</div>
+                  <progress class="progress progress-primary w-56" [value]="stat.appData.pc[2] / stat.appData.n * 100"
+                            max="100"></progress>
+                  <div>4</div>
+                  <progress class="progress progress-primary w-56" [value]="stat.appData.pc[3] / stat.appData.n * 100"
+                            max="100"></progress>
+                  <div>5</div>
+                  <progress class="progress progress-primary w-56" [value]="stat.appData.pc[4] / stat.appData.n * 100"
+                            max="100"></progress>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+        <div class="col-span-3">
+          <div class="flex flex-col justify-center w-11/12">
+            <app-review [review]="review" *ngFor="let review of reviews" class="w-full"></app-review>
+            <ng-container *ngSwitchCase="'APP_LOADING'">
+              <div class="flex justify-center items-center py-10">
+                <span class="loading text-primary loading-dots loading-lg"></span>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="'APP_ERROR'">
+              {{reviewsState.appErr | json}}
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="0">
+      <div class="flex justify-center items-center m-8">
+        пока что нет отзывов
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngSwitchCase="'APP_ERROR'">
+    <div class="flex justify-center items-center m-8">
+      пока что нет отзывов
+    </div>
+  </ng-container>
+</ng-container>

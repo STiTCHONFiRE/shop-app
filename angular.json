@@ -4,6 +4,9 @@
   "newProjectRoot": "projects",
   "projects": {
     "shop-app": {
+      "i18n": {
+        "sourceLocale": "ru-RU"
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -49,7 +52,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@kolkov/angular-editor/assets/",
+                "output": "./assets/fonts/"
+              }
             ],
             "styles": [
               "src/styles.scss"
@@ -115,12 +123,16 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "../node_modules/font-awesome/css/font-awesome.css"
             ],
             "scripts": []
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

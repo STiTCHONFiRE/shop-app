@@ -1,0 +1,60 @@
+<div class="card card-side bg-base-100 my-3 self-center">
+  <figure><img
+    [src]="'http://localhost:8081/api/v1/products/public/images/' + position.product.imagesIds[0]"
+    alt="Movie"
+    style="height: 250px; width: 300px"/></figure>
+  <div class="card-body">
+    <h3 class="card-title mx-3">
+      <a class="link link-hover" [routerLink]="['/products/details', position.product.id]">
+        {{position.product.productType}} {{position.product.productProducer}} {{position.product.tittle}}
+      </a>
+    </h3>
+    <div class="my-2 mx-3">[{{position.product.characteristicsShort}}]</div>
+    <div class="mx-3">Кол-во: {{position.n}}</div>
+    <div class="my-3 mx-3"><span class="text-xl text-white">Цена: <span
+      class="btn btn-outline">{{position.product.price | number}} руб.</span></span></div>
+    <ng-container *ngIf="state == 'DONE'">
+      <div class="card-actions justify-end">
+        <button *ngIf="position.review" class="btn btn-primary" (click)="dialogElement1.showModal()">Посмотреть
+          мой отзыв
+        </button>
+        <dialog #dialogElement1 class="modal">
+          <form method="dialog" class="modal-box">
+            <app-review [review]="position.review" class="w"></app-review>
+            <div class="modal-action">
+              <!-- if there is a button in form, it will close the modal -->
+              <button class="btn">закрыть</button>
+            </div>
+          </form>
+        </dialog>
+        <button *ngIf="!position.review" class="btn btn-primary" (click)="dialogElement2.showModal()">Оставить
+          отзыв
+        </button>
+        <dialog #dialogElement2 class="modal">
+          <form method="dialog" [formGroup]="form" class="modal-box">
+            <h3 class="font-bold text-lg">Оставьте свой отзыв!</h3>
+            <p class="py-4">Выберите оценку и напищите, что вы думаете о товаре.</p>
+            <label class="label">
+              <span class="label-text">Оценка</span>
+            </label>
+            <select formControlName="rating" class="select select-bordered w-full max-w-fit">
+              <option [value]="null" disabled selected>Выберите оценку</option>
+              <option [value]="0">Очень плохо</option>
+              <option [value]="1">Плохо</option>
+              <option [value]="2">Нормально</option>
+              <option [value]="3">Хорошо</option>
+              <option [value]="4">Отлично</option>
+            </select>
+            <label class="label">
+              <span class="label-text">Отзыв</span>
+            </label>
+            <textarea formControlName="text" class="textarea textarea-bordered w-full" style="height: 150px" placeholder="Напишите свой отзыв..."></textarea>
+            <div class="modal-action">
+              <button class="btn btn-primary" (click)="onSendData()" [disabled]="form.invalid">Оставить отзыв</button>
+            </div>
+          </form>
+        </dialog>
+      </div>
+    </ng-container>
+  </div>
+</div>

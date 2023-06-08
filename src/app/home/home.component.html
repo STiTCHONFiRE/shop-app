@@ -1,0 +1,45 @@
+<ng-container *ngIf="state == 'SELECTING'">
+  <div class="flex justify-center items-center">
+    <div class="card bg-base-200 w-11/12 m-5">
+      <div class="card-body">
+        <h2 class="card-title">
+          Поиск товаров
+        </h2>
+        <form #searchForm="ngForm" (ngSubmit)="onSendData(searchForm.value.search)" class="flex justify-center items-center">
+          <div class="join m-5 w-full max-w-full">
+            <input type="text" autocomplete="off" name="search" ngModel class="input join-item w-11/12"
+                   placeholder="Название товара..."/>
+            <button class="btn btn-primary btn-wide join-item rounded-r-full">Поиск</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-wrap justify-center items-center">
+    <ng-container *ngIf="(productTypes$ | async) as state" [ngSwitch]="state.appState">
+      <ng-container *ngSwitchCase="'APP_ERROR'">
+        {{state.err | json}}
+      </ng-container>
+      <ng-container *ngSwitchCase="'APP_LOADING'">
+        <div class="flex justify-center items-center py-10">
+          <progress class="progress progress-primary w-56"></progress>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'APP_LOADED'">
+        <div class="card bg-base-200 m-5 xl:w-3/12 w-5/12 h-2/3 item" *ngFor="let type of state.appData">
+          <div class="card-body">
+            <h2 class="card-title">
+              {{type.name}}
+            </h2>
+            <div class="card-actions place-self-end">
+              <button [routerLink]="['/products', type.tp | lowercase]" class="btn btn-primary my-5">найти</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</ng-container>
+<ng-container *ngIf="state == 'SEARCHING'">
+  <app-products [filter]="filter"></app-products>
+</ng-container>

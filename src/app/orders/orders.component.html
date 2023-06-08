@@ -1,0 +1,126 @@
+<div class="flex flex-col justify-center items-center m-5">
+  <ng-container *ngIf="(ordersActive$ | async) as ordersActive" [ngSwitch]="ordersActive.appState">
+    <div class="card card-side bg-base-200 w-9/12 m-4">
+      <div class="card-body justify-center items-center">
+        <h2 class="card-title mx-10 self-start">Активные заказы</h2>
+        <ng-container *ngSwitchCase="'APP_LOADED'">
+          <ng-container [ngSwitch]="ordersActive.appData.length">
+            <ng-container *ngSwitchDefault>
+              <div class="card card-side bg-base-100 m-4 w-10/12" *ngFor="let order of ordersActive.appData">
+                <div class="card-body">
+                  <h3 class="card-title"><a class="link link-hover"
+                                            [routerLink]="['/orders', order.id]">Заказ: {{order.id}}
+                    от {{order.instant | date: 'medium'}}</a></h3>
+                  <div>Статус заказа:
+                    <span class="badge badge-info" *ngIf="order.orderState == 'FORMATION'">формирование</span>
+                    <span class="badge badge-info" *ngIf="order.orderState == 'ON_THE_WAY'">в пути</span>
+                    <span class="badge badge-warning" *ngIf="order.orderState == 'AWAITING_RECEIPT'">ожидает получения</span>
+                    <span class="badge badge-success" *ngIf="order.orderState == 'DONE'">завершен</span>
+                    <span class="badge badge-error" *ngIf="order.orderState == 'CANCELED'">отменен</span>
+                  </div>
+                  <div *ngFor="let position of order.products | slice:0:2">
+                    <div class="card bg-base-200 m-3 card-side">
+                      <figure><img
+                        [src]="'http://localhost:8081/api/v1/products/public/images/' + position.product.imagesIds[0]"
+                        alt="Movie"
+                        style="height: 250px; width: 300px"/></figure>
+                      <div class="card-body">
+                        <h4 class="card-title mx-3">
+                          <a class="link link-hover" [routerLink]="['/products/details', position.product.id]">
+                            {{position.product.productType}} {{position.product.productProducer}} {{position.product.tittle}}
+                          </a>
+                        </h4>
+                        <div class="my-2 mx-3">[{{position.product.characteristicsShort}}]</div>
+                        <div class="mx-3">Кол-во: {{position.n}}</div>
+                        <div class="my-3 mx-3"><span class="text-xl text-white">Цена: <span
+                          class="btn btn-outline">{{position.product.price | number}} руб.</span></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-container *ngIf="order.products.length > 2">
+                    <div class="divider"></div>
+                    <div class="self-center">
+                      <div>и ещё {{order.products.length - 2}} товар(-a)(-ов)</div>
+                    </div>
+                  </ng-container>
+                  <div class="card-actions justify-end items-center my-2">
+                    <div class="text-xl text-white">Итого: <span
+                      class="btn btn-outline">{{getSum(order.products) | number}} руб.</span></div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="0">
+              <div class="self-center m-5">пока нет активных заказов</div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="(orders$ | async) as state" [ngSwitch]="state.appState">
+    <div class="card card-side bg-base-200 w-9/12 m-4">
+      <div class="card-body justify-center items-center">
+        <h2 class="card-title mx-10 self-start">История заказов</h2>
+        <ng-container *ngIf="(ordersArr$.asObservable() | async) as orders" [ngSwitch]="orders.length">
+          <ng-container *ngSwitchDefault>
+            <div class="card card-side bg-base-100 m-4 w-10/12" *ngFor="let order of orders">
+              <div class="card-body">
+                <h3 class="card-title"><a class="link link-hover"
+                                          [routerLink]="['/orders', order.id]">Заказ: {{order.id}}
+                  от {{order.instant | date: 'medium'}}</a></h3>
+                <div>Статус заказа:
+                  <span class="badge badge-info" *ngIf="order.orderState == 'FORMATION'">формирование</span>
+                  <span class="badge badge-info" *ngIf="order.orderState == 'ON_THE_WAY'">в пути</span>
+                  <span class="badge badge-warning" *ngIf="order.orderState == 'AWAITING_RECEIPT'">ожидает получения</span>
+                  <span class="badge badge-success" *ngIf="order.orderState == 'DONE'">завершен</span>
+                  <span class="badge badge-error" *ngIf="order.orderState == 'CANCELED'">отменен</span>
+                </div>
+                <div *ngFor="let position of order.products | slice:0:2">
+                  <div class="card bg-base-200 m-3 card-side">
+                    <figure><img
+                      [src]="'http://localhost:8081/api/v1/products/public/images/' + position.product.imagesIds[0]"
+                      alt="Movie"
+                      style="height: 250px; width: 300px"/></figure>
+                    <div class="card-body">
+                      <h4 class="card-title mx-3">
+                        <a class="link link-hover" [routerLink]="['/products/details', position.product.id]">
+                          {{position.product.productType}} {{position.product.productProducer}} {{position.product.tittle}}
+                        </a>
+                      </h4>
+                      <div class="my-2 mx-3">[{{position.product.characteristicsShort}}]</div>
+                      <div class="mx-3">Кол-во: {{position.n}}</div>
+                      <div class="my-3 mx-3"><span class="text-xl text-white">Цена: <span
+                        class="btn btn-outline">{{position.product.price | number}} руб.</span></span></div>
+                    </div>
+                  </div>
+                </div>
+                <ng-container *ngIf="order.products.length > 2">
+                  <div class="divider"></div>
+                  <div class="self-center">
+                    <div>и ещё {{order.products.length - 2}} товар(-a)(-ов)</div>
+                  </div>
+                </ng-container>
+                <div class="card-actions justify-end items-center my-2">
+                  <div class="text-xl text-white">Итого: <span
+                    class="btn btn-outline">{{getSum(order.products) | number}} руб.</span></div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="0">
+            <div class="self-center m-5" *ngIf="!(state.appState == 'APP_ERROR')">пока нет заказов в истории</div>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'APP_ERROR'">
+          {{state.appErr | json}}
+        </ng-container>
+        <ng-container *ngSwitchCase="'APP_LOADING'">
+          <div class="flex justify-center items-center py-10">
+            <span class="loading text-primary loading-dots loading-lg"></span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>

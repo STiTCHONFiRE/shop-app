@@ -1,0 +1,63 @@
+<div class="flex justify-center items-center">
+  <div class="card bg-base-200 w-11/12 m-5">
+    <div class="card-body">
+      <h2 class="card-title">
+        Поиск товаров
+      </h2>
+      <form [formGroup]="searchForm" (ngSubmit)="onSendData()" class="flex justify-center items-center">
+        <div class="join m-5 w-full max-w-full">
+          <input formControlName="search" class="input join-item w-11/12 max-w-full" placeholder="Название товара..."/>
+          <button class="btn btn-primary btn-wide join-item rounded-r-full">Поиск</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="products" (scroll)="onScroll()">
+  <ng-container *ngIf="(products$ | async) as state" [ngSwitch]="state.appState">
+    <div class="flex flex-col justify-center items-center m-5 items">
+      <ng-container [ngSwitch]="products.length">
+        <ng-container *ngSwitchDefault>
+          <div class="card card-side w-8/12 bg-base-200 item m-5" *ngFor="let product of products">
+            <figure><img [src]="'http://localhost:8081/api/v1/products/public/images/' + product.imagesIds[0]"
+                         alt="Movie"
+                         style="height: 250px; width: 300px; object-fit: contain"/></figure>
+            <div class="card-body">
+              <h2 class="card-title"><a
+                class="link link-hover"
+                [routerLink]="['/products/details', product.id]">{{product.productType}} {{product.productProducer}} {{product.tittle}}</a>
+              </h2>
+              <div class="my-2">{{product.characteristicsShort}}</div>
+              <div class="card-actions justify-between" style="margin-top: 30px">
+                <div class=""><span class="btn btn-outline no-animation text-white"> {{product.price | number}}
+                  руб.</span>
+                </div>
+                <div>
+                  <button *ngIf="isAuth() && !isContaining(product.id)" (click)="addToCart(product.id)"
+                          class="btn btn-primary mx-2">в корзину
+                  </button>
+                  <button *ngIf="isAuth() && isContaining(product.id)" class="btn btn-primary mx-2"
+                          (click)="removeFromCart(product.id)">Убрать из корзины
+                  </button>
+                  <button *ngIf="!isAuth()" class="btn btn-primary" (click)="login()">войдите, чтобы добавить в корзину
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="0">
+          ничего не найдено
+        </ng-container>
+      </ng-container>
+    </div>
+    <ng-container *ngSwitchCase="'APP_ERROR'">
+      {{state.err | json}}
+    </ng-container>
+    <ng-container *ngSwitchCase="'APP_LOADING'">
+      <div class="flex justify-center items-center py-10">
+        <span class="loading text-primary loading-dots loading-lg"></span>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

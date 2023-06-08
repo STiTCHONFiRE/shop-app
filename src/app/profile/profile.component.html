@@ -1,0 +1,15 @@
+<div class="flex justify-center items-center">
+  <div class="card w-7/12 bg-base-200 m-5">
+    <div class="card-body">
+      <h2 class="card-title">Профиль</h2>
+      <div>Ник: {{claims['sub']}}</div>
+      <div>Email: {{claims['email']}}</div>
+      <div>Дата рождения: {{claims['birthdate']}}</div>
+      <div>Номер телефона: {{claims['phone_number']}}</div>
+      <div>Адресс доставки: {{claims['address']['formatted']}}</div>
+      <div class="card-actions justify-center m-5">
+        <button class="btn btn-primary btn-wide" routerLink="/orders">мои заказы</button>
+      </div>
+    </div>
+  </div>
+</div>

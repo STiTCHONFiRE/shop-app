@@ -1,0 +1,25 @@
+<ng-container *ngIf="review">
+  <div class="card bg-base-100 m-3">
+    <div class="card-body">
+      <h3 class="card-title">
+        Отзыв {{review.username}} {{review.creationTimestamp | date:'medium'}}
+      </h3>
+      <div class="text-sm">Дата покупки: {{review.dateOfPurchase | date:'medium'}}</div>
+      <div>
+        <div class="rating">
+          <input type="radio" [name]="review.id" class="mask mask-star-2 bg-orange-400" disabled
+                 [checked]="review.reviewRating == 'VERY_BAD'"/>
+          <input type="radio" [name]="review.id" class="mask mask-star-2 bg-orange-400" disabled
+                 [checked]="review.reviewRating == 'BAD'"/>
+          <input type="radio" [name]="review.id" class="mask mask-star-2 bg-orange-400" disabled
+                 [checked]="review.reviewRating == 'NORMAL'"/>
+          <input type="radio" [name]="review.id" class="mask mask-star-2 bg-orange-400" disabled
+                 [checked]="review.reviewRating == 'GOOD'"/>
+          <input type="radio" [name]="review.id" class="mask mask-star-2 bg-orange-400" disabled
+                 [checked]="review.reviewRating == 'VERY_GOOD'"/>
+        </div>
+      </div>
+      <div class="my-2">{{review.reviewText}}</div>
+    </div>
+  </div>
+</ng-container>
